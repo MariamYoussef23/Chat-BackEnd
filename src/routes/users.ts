@@ -1,8 +1,8 @@
 import { Router } from "express";
 import bcrypt from "bcryptjs";
 import { User } from "../entities/user";
-import jwt from 'jsonwebtoken'
-
+import jwt from "jsonwebtoken";
+import axios from "axios";
 
 const router = Router();
 
@@ -17,27 +17,30 @@ router.get("/", async (req, res) => {
 });
 
 router.post("/signUp", async (req, res) => {
-    try {
-      const { firstName, lastName, email, password } = req.body;
-      if (password.length > 8) {
-        return res
-          .status(400)
-          .send({ message: "Password must be at least 8 characters " });
-      }
-      const hashPassword = await bcrypt.hash(password, 10);
-      const user = User.create({
-        firstName,
-        lastName,
-        email,
-        password: hashPassword,
-      });
-      await user.save();
-      res.send({ data: user });
-    } catch (error) {
-      res.status(500).send({ message: error });
+  try {
+    const data = await axios.get("https://randomuser.me/api/");
+    const imgUrl = data.data.results["0"].picture.thumbnail;
+    const { firstName, lastName, email, password } = req.body;
+    if (password.length > 8) {
+      return res
+        .status(400)
+        .send({ message: "Password must be at least 8 characters " });
     }
-  });
-  
+    const hashPassword = await bcrypt.hash(password, 10);
+    const user = User.create({
+      firstName,
+      lastName,
+      imgUrl,
+      email,
+      password: hashPassword,
+    });
+    await user.save();
+    res.send({ data: user });
+  } catch (error) {
+    res.status(500).send({ message: error });
+  }
+});
+
 router.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -52,9 +55,9 @@ router.post("/login", async (req, res) => {
       return res.status(400).json({ message: "wrong password" });
     }
 
-    const token = jwt.sign({email: user.email}, process.env.JWT_SECRET!, {
-        expiresIn: '1d'
-    })
+    const token = jwt.sign({ email: user.email }, process.env.JWT_SECRET!, {
+      expiresIn: "1d",
+    });
 
     res.json({ data: token });
   } catch (error) {
@@ -62,6 +65,17 @@ router.post("/login", async (req, res) => {
   }
 });
 
-
+router.get("/me", async (req, res) => {
+  try {
+    const { token } = req.body;
+    const { email } = jwt.verify(token, process.env.JWT_SECRET!) as {
+      email: string;
+    };
+    const user = await User.findOne({ where: { email: email } });
+    res.json({ data: user });
+  } catch (error) {
+    res.status(500).json({ message: error });
+  }
+});
 
 export default router;

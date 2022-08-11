@@ -17,6 +17,9 @@ export class User extends BaseEntity {
   @Column()
   lastName: string;
 
+  @Column({nullable: true})
+  imgUrl: string;
+
   @Column({unique: true})
   email: string;
 
