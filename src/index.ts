@@ -4,7 +4,7 @@ import morgan from 'morgan'
 import helmet from 'helmet'
 import { config } from 'dotenv';
 import { AppDataSource } from './data-source';
-
+import usersRouter from './routes/users'
 
 const app = express()
 
@@ -14,6 +14,9 @@ app.use(morgan("dev"));
 app.use(helmet());
 app.use(json());
 app.use(urlencoded({ extended: false }));
+
+
+app.use('/users', usersRouter)
 
 app.listen(process.env.PORT, async()=> {
     try {
