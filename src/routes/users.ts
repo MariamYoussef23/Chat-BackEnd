@@ -1,6 +1,7 @@
 import { Router } from "express";
 import bcrypt from "bcryptjs";
 import { User } from "../entities/user";
+import jwt from 'jsonwebtoken'
 
 
 const router = Router();
@@ -51,11 +52,16 @@ router.post("/login", async (req, res) => {
       return res.status(400).json({ message: "wrong password" });
     }
 
-    res.json({ data: user });
+    const token = jwt.sign({email: user.email}, process.env.JWT_SECRET!, {
+        expiresIn: '1d'
+    })
+
+    res.json({ data: token });
   } catch (error) {
     res.status(500).json({ message: error });
   }
 });
+
 
 
 export default router;
