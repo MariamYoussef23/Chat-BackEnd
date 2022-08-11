@@ -2,30 +2,41 @@ import { Router } from "express";
 import bcrypt from "bcryptjs";
 import { User } from "../entities/user";
 
+
 const router = Router();
 
 router.get("/", async (req, res) => {
   try {
     const users = await User.find();
+
     res.json({ data: users });
   } catch (error) {
     res.status(500).json({ message: error });
   }
 });
 
-router.post("/signup", async (req, res) => {
-  try {
-    const { firstname, lastName, email, password } = req.body;
-    if (password.length > 8) {
-      return res
-        .status(400)
-        .json({ message: "Password must be at least 8 characters " });
+router.post("/signUp", async (req, res) => {
+    try {
+      const { firstName, lastName, email, password } = req.body;
+      if (password.length > 8) {
+        return res
+          .status(400)
+          .send({ message: "Password must be at least 8 characters " });
+      }
+      const hashPassword = await bcrypt.hash(password, 10);
+      const user = User.create({
+        firstName,
+        lastName,
+        email,
+        password: hashPassword,
+      });
+      await user.save();
+      res.send({ data: user });
+    } catch (error) {
+      res.status(500).send({ message: error });
     }
-  } catch (error) {
-    res.status(500).json({ message: error });
-  }
-});
-
+  });
+  
 router.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -45,5 +56,6 @@ router.post("/login", async (req, res) => {
     res.status(500).json({ message: error });
   }
 });
+
 
 export default router;
