@@ -18,7 +18,7 @@ export class User extends BaseEntity {
   lastName: string;
 
   @Column({nullable: true})
-  imgUrl: string;
+  imgURL: string;
 
   @Column({unique: true})
   email: string;
@@ -27,7 +27,7 @@ export class User extends BaseEntity {
   password: string;
 
   @CreateDateColumn({ type: "timestamptz" })
-  createAt: Date;
+  createdAt: Date;
 
   @UpdateDateColumn({ type: "timestamptz" })
   updatedAt: Date;

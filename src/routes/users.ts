@@ -3,6 +3,8 @@ import bcrypt from "bcryptjs";
 import { User } from "../entities/user";
 import jwt from "jsonwebtoken";
 import axios from "axios";
+import { middleware } from "./middleware";
+import { RequestAuth } from "../types";
 
 const router = Router();
 
@@ -19,26 +21,28 @@ router.get("/", async (req, res) => {
 router.post("/signUp", async (req, res) => {
   try {
     const data = await axios.get("https://randomuser.me/api/");
-    const imgUrl = data.data.results["0"].picture.thumbnail;
+    const imgURL = data.data.results["0"].picture.thumbnail;
     const { firstName, lastName, email, password } = req.body;
     if (password.length > 8) {
       return res
         .status(400)
-        .send({ message: "Password must be at least 8 characters " });
+        .json({ message: "Password must be at least 8 characters " });
     }
     const hashPassword = await bcrypt.hash(password, 10);
     const user = User.create({
       firstName,
       lastName,
-      imgUrl,
+      imgURL,
       email,
       password: hashPassword,
     });
+
+    await user.save();
     const token = jwt.sign({ email: user.email }, process.env.JWT_SECRET!, {
       expiresIn: "1d",
     });
-    await user.save();
-    res.send({ data: user, token });
+
+    res.json({ userInfo: user, token });
   } catch (error) {
     res.status(500).send({ message: error });
   }
@@ -68,17 +72,9 @@ router.post("/login", async (req, res) => {
   }
 });
 
-router.get("/me", async (req, res) => {
-  try {
-    const { token } = req.body;
-    const { email } = jwt.verify(token, process.env.JWT_SECRET!) as {
-      email: string;
-    };
-    const user = await User.findOne({ where: { email: email } });
-    res.json({ data: user });
-  } catch (error) {
-    res.status(500).json({ message: error });
-  }
+router.get("/me", middleware, async (req: RequestAuth, res) => {
+    const user = req.user
+    res.json({ user })
 });
 
 export default router;
