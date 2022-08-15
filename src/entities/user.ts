@@ -1,20 +1,17 @@
 import {
-  BaseEntity,
   Column,
   Entity,
-  PrimaryGeneratedColumn,
-  CreateDateColumn,
-  UpdateDateColumn,
   OneToMany,
   ManyToMany,
+  JoinTable,
 } from "typeorm";
 import { Chat } from "./chat";
+import { MainEntity } from "./main";
 import { Message } from "./message";
 
 @Entity()
-export class User extends BaseEntity {
-  @PrimaryGeneratedColumn()
-  id: number;
+export class User extends MainEntity{
+  
   @Column()
   firstName: string;
 
@@ -30,15 +27,10 @@ export class User extends BaseEntity {
   @Column()
   password: string;
 
-  @CreateDateColumn({ type: "timestamptz" })
-  createdAt: Date;
-
-  @UpdateDateColumn({ type: "timestamptz" })
-  updatedAt: Date;
-
   @OneToMany(() => Message, (message) => message.user)
   messages: Message[];
 
   @ManyToMany(() => Chat, (chat) => chat.users)
+  @JoinTable()
   chats: Chat[];
 }
