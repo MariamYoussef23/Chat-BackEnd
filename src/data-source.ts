@@ -2,6 +2,8 @@ import { config } from "dotenv";
 import { DataSource } from "typeorm";
 import "reflect-metadata";
 import { User } from "./entities/user";
+import { Chat } from "./entities/chat";
+import { Message } from "./entities/message";
 
 config();
 export const AppDataSource = new DataSource({
@@ -13,7 +15,7 @@ export const AppDataSource = new DataSource({
   database: process.env.DatabaseName,
   synchronize: true,
   logging: false,
-  entities: [User],
+  entities: [User,Chat, Message],
   migrations: ["migration/*.ts"],
   subscribers: [],
 });
