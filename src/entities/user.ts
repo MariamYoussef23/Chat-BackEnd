@@ -1,12 +1,9 @@
 import {
-  BaseEntity,
   Column,
   Entity,
-  PrimaryGeneratedColumn,
-  CreateDateColumn,
-  UpdateDateColumn,
   OneToMany,
   ManyToMany,
+  JoinTable,
 } from "typeorm";
 import { Chat } from "./chat";
 import { MainEntity } from "./main";
@@ -34,5 +31,6 @@ export class User extends MainEntity{
   messages: Message[];
 
   @ManyToMany(() => Chat, (chat) => chat.users)
+  @JoinTable()
   chats: Chat[];
 }
