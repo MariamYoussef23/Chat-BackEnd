@@ -5,6 +5,7 @@ import helmet from 'helmet'
 import { config } from 'dotenv';
 import { AppDataSource } from './data-source';
 import usersRouter from './routes/users'
+import chatsRouter from './routes/chats'
 
 const app = express()
 
@@ -17,6 +18,7 @@ app.use(urlencoded({ extended: false }));
 
 
 app.use('/users', usersRouter)
+app.use('/chats', chatsRouter)
 
 app.listen(process.env.PORT, async()=> {
     try {
