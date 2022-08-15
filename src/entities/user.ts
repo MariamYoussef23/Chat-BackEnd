@@ -5,7 +5,11 @@ import {
   PrimaryGeneratedColumn,
   CreateDateColumn,
   UpdateDateColumn,
+  OneToMany,
+  ManyToMany,
 } from "typeorm";
+import { Chat } from "./chat";
+import { Message } from "./message";
 
 @Entity()
 export class User extends BaseEntity {
@@ -17,10 +21,10 @@ export class User extends BaseEntity {
   @Column()
   lastName: string;
 
-  @Column({nullable: true})
+  @Column({ nullable: true })
   imgURL: string;
 
-  @Column({unique: true})
+  @Column({ unique: true })
   email: string;
 
   @Column()
@@ -31,4 +35,10 @@ export class User extends BaseEntity {
 
   @UpdateDateColumn({ type: "timestamptz" })
   updatedAt: Date;
+
+  @OneToMany(() => Message, (message) => message.user)
+  messages: Message[];
+
+  @ManyToMany(() => Chat, (chat) => chat.users)
+  chats: Chat[];
 }
