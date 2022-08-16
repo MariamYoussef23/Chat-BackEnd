@@ -4,13 +4,27 @@ import { Message } from "../entities/message";
 import { User } from "../entities/user";
 import { RequestAuth } from "../types";
 import { middleware } from "./middleware";
+
 const router = Router();
+
+//get all chats 
+router.get("/", middleware, async (req, res) => {
+  try {
+    const chats = await Chat.find();
+    if (!chats) {
+      return res.status(400).send({ message: "no chat found" });
+    }
+    res.status(200).json({ data: chats });
+  } catch (error) {
+    res.status(500).json({ error });
+  }
+});
 
 //create a new message 
 router.post("/message", middleware, async (req: RequestAuth, res) => {
   try {
-    const user = req.user
-    const { body, chatId} = req.body;
+    const user = req.user;
+    const { body, chatId } = req.body;
     const chat = await Chat.findOne({ where: { id: chatId } });
     if (!chat) {
       return res.status(400).send({ message: "no chat found" });

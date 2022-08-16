@@ -15,6 +15,7 @@ export const AppDataSource = new DataSource({
   database: process.env.DatabaseName,
   synchronize: true,
   logging: false,
+
   entities: [User, Chat, Message],
   migrations: ["migration/*.ts"],
   subscribers: [],
