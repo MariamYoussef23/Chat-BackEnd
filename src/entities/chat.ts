@@ -6,14 +6,13 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from "typeorm";
+import { MainEntity } from "./main";
 import { Message } from "./message";
 import { User } from "./user";
 
 @Entity()
-export class Chat extends BaseEntity {
-  @PrimaryGeneratedColumn()
-  id: number;
-
+export class Chat extends MainEntity {
+  
   @Column()
   chatName: string;
 

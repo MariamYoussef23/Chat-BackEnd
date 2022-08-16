@@ -7,7 +7,6 @@ import { middleware } from "./middleware";
 
 const router = Router();
 
-//get all chats
 router.get("/", middleware, async (req, res) => {
   try {
     const chats = await Chat.find();
@@ -19,8 +18,6 @@ router.get("/", middleware, async (req, res) => {
     res.status(500).json({ error });
   }
 });
-
-//create a new message
 router.post("/message", middleware, async (req: RequestAuth, res) => {
   try {
     const user = req.user;
@@ -33,33 +30,9 @@ router.post("/message", middleware, async (req: RequestAuth, res) => {
     const message = Message.create({
       body,
       chat,
-      user,
+      user: req.user,
     });
-
-    await message.save();
-    res.json({ message });
-  } catch (error) {
-    console.log(error);
-  }
-});
-
-//create a new chat
-router.post("/chat", middleware, async (req: RequestAuth, res) => {
-  try {
-    const user = req.user;
-    const { chatName, chatUsers } = req.body;
-
-    const users = [user, chatUsers];
-    const chat = Chat.create({
-      chatName,
-      users,
-    });
-
-    await chat.save();
-    res.json({ chat });
-  } catch (error) {
-    console.log(error);
-  }
+  } catch (error) {}
 });
 
 export default router;
