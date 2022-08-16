@@ -3,6 +3,7 @@ import { Chat } from "./chat";
 import { MainEntity } from "./main";
 import { User } from "./user";
 
+
 @Entity()
 export class Message extends MainEntity {
   @Column()

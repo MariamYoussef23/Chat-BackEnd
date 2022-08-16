@@ -1,4 +1,5 @@
 import { Router } from "express";
+import { In } from "typeorm";
 import { Chat } from "../entities/chat";
 import { Message } from "../entities/message";
 import { User } from "../entities/user";
@@ -21,63 +22,67 @@ router.get("/chats", middleware, async (req, res) => {
 });
 
 //get all messages within a chat 
-router.get("/messages", middleware, async (req, res) => {
+
+
+//get all chats f
+router.get("/", middleware, async (req: RequestAuth, res) => {
   try {
-    const chats = await Chat.find();
-    if (!chats) {
-      return res.status(400).send({ message: "no chat found" });
-    }
+    const user = req.user!;
+
+    const { chats } = (await User.findOne({
+      where: { id: user.id },
+      relations: { chats: { users: true } },
+    }))!;
+
     res.status(200).json({ data: chats });
   } catch (error) {
     res.status(500).json({ error });
   }
 });
 
-//create a new message 
+//create a new message
 router.post("/message", middleware, async (req: RequestAuth, res) => {
   try {
-    const user = req.user;
+    const user = req.user!;
     const { body, chatId } = req.body;
     const chat = await Chat.findOne({ where: { id: chatId } });
     if (!chat) {
       return res.status(400).send({ message: "no chat found" });
     }
-    
+
     const message = Message.create({
       body,
       chat,
-      user
+      user,
     });
-    
-    await message.save()
+
+    await message.save();
     res.json({ message });
   } catch (error) {
-    console.log(error)
+    console.log(error);
   }
 });
 
-
-//create a new chat 
+//create a new chat
 router.post("/chat", middleware, async (req: RequestAuth, res) => {
-  try{
-      const user = req.user
-      const {chatName, chatUsers } = req.body
+  try {
+    const user = req.user!;
+    const { chatName, userIds } = req.body;
 
-      const users = [user, chatUsers]
-      const chat = Chat.create({
-        chatName,
-        users
-      })
+    let users = await User.find({ where: { id: In(userIds || []) } });
+    users.push(user);
 
-      await chat.save()
+    const chat = Chat.create({
+      chatName,
+      users,
+    });
+
+    await chat.save();
+
     res.json({ chat });
-  }catch(error){
-    console.log(error)
+  } catch (error) {
+    console.log(error);
   }
-})
-
+});
 
 export default router;
-
-
-
