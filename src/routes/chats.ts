@@ -23,6 +23,7 @@ router.get("/", middleware, async (req: RequestAuth, res) => {
     res.status(500).json({ error });
   }
 });
+
 //get all messages within a chat
 router.get("/:id/messages", middleware, async (req: RequestAuth, res) => {
   try {
@@ -30,7 +31,7 @@ router.get("/:id/messages", middleware, async (req: RequestAuth, res) => {
 
     const { messages } = (await Chat.findOne({
       where: { id },
-      relations: { messages: { chat: true } },
+      relations: { messages: { chat: true, user:true } },
     }))!;
 
     res.status(200).json({ data: messages });
