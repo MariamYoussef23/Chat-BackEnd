@@ -12,11 +12,11 @@ import { User } from "./user";
 @Entity()
 export class Message extends MainEntity {
   @Column()
-  message: string;
+  body: string;
 
-  @ManyToOne(() => User, (user) => user.messages)
+  @ManyToOne(() => User, (user) => user.messages, {nullable: false})
   user: User;
 
-  @ManyToOne(() => Chat, (chat) => chat.messages)
+  @ManyToOne(() => Chat, (chat) => chat.messages, {nullable: false})
   chat: Chat;
 }
