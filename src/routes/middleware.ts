@@ -8,11 +8,11 @@ export const middleware = async (
   res: Response,
   next: NextFunction
 ) => {
+  const { token } = req.headers;
+  if (!token) {
+    return res.json(404).send("No valid token was provided");
+  }
   try {
-    const { token } = req.headers;
-    if (!token) {
-      return res.json(404).send("No valid token was provided");
-    }
     const { email } = jwt.verify(token as string, process.env.JWT_SECRET!) as {
       email: string;
     };
