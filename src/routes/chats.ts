@@ -2,7 +2,7 @@ import { Router } from "express";
 import { Chat } from "../entities/chat";
 import { Message } from "../entities/message";
 import { User } from "../entities/user";
-import { RequestAuth, UserType } from "../types";
+import { RequestAuth} from "../types";
 import { middleware } from "./middleware";
 const router = Router();
 
