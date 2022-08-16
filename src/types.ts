@@ -1,7 +1,9 @@
 import {Request} from "express"
+import { User } from "./entities/user";
 export interface RequestAuth extends Request {
-    user?: User
+    user?: User 
 }
+<<<<<<< HEAD
 
 export interface User {
     id: number 
@@ -13,3 +15,5 @@ export interface User {
     createdAt: Date
     updatedAt: Date
 }
+=======
+>>>>>>> main

@@ -11,23 +11,14 @@ import { Chat } from "./chat";
 import { MainEntity } from "./main";
 import { User } from "./user";
 
-@Entity()
-export class Message extends BaseEntity {
-  @PrimaryGeneratedColumn()
-  id: number;
 
+export class Message extends MainEntity {
   @Column()
-  messageBody: string;
+  body: string;
 
-  @CreateDateColumn({ type: "timestamptz" })
-  createdAt: Date;
-
-  @UpdateDateColumn({ type: "timestamptz" })
-  updatedAt: Date;
-  
-  @ManyToOne(() => User, (user) => user.messages)
+  @ManyToOne(() => User, (user) => user.messages, {nullable: false})
   user: User;
 
-  @ManyToOne(() => Chat, (chat) => chat.messages)
+  @ManyToOne(() => Chat, (chat) => chat.messages, {nullable: false})
   chat: Chat;
 }
