@@ -9,7 +9,7 @@ export interface User {
     lastName: string 
     email: string 
     password: string 
-    imgURL: string | null
+    imgURL?: string
     createdAt: Date
     updatedAt: Date
 }

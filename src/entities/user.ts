@@ -1,17 +1,10 @@
-import {
-  Column,
-  Entity,
-  OneToMany,
-  ManyToMany,
-  JoinTable,
-} from "typeorm";
+import { Column, Entity, OneToMany, ManyToMany, JoinTable } from "typeorm";
 import { Chat } from "./chat";
 import { MainEntity } from "./main";
 import { Message } from "./message";
 
 @Entity()
-export class User extends MainEntity{
-  
+export class User extends MainEntity {
   @Column()
   firstName: string;
 
