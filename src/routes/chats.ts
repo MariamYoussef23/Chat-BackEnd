@@ -31,8 +31,13 @@ router.get("/:id/messages", middleware, async (req: RequestAuth, res) => {
 
     const { messages } = (await Chat.findOne({
       where: { id },
-      relations: { messages: { chat: true, user:true } },
+      relations: { messages: { user: true } },
     }))!;
+
+    // const messages = await Message.find({
+    //   where: { chat: { id },
+    //   relations: {user: true} }
+    // });
 
     res.status(200).json({ data: messages });
   } catch (error) {
@@ -41,10 +46,11 @@ router.get("/:id/messages", middleware, async (req: RequestAuth, res) => {
 });
 
 //create a new message
-router.post("/message", middleware, async (req: RequestAuth, res) => {
+router.post("/:id/message", middleware, async (req: RequestAuth, res) => {
   try {
     const user = req.user!;
-    const { body, chatId } = req.body;
+    const chatId = +req.params.id
+    const {body} = req.body;
     const chat = await Chat.findOne({ where: { id: chatId } });
     if (!chat) {
       return res.status(400).send({ message: "no chat found" });
@@ -84,5 +90,8 @@ router.post("/chat", middleware, async (req: RequestAuth, res) => {
     console.log(error);
   }
 });
+
+
+
 
 export default router;
