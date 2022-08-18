@@ -16,6 +16,9 @@ export class Chat extends MainEntity {
   @Column()
   chatName: string;
 
+  @Column({ nullable: true })
+  ChatImgURL: string;
+
   @OneToMany(() => Message, (message) => message.chat)
   messages: Message[];
 
