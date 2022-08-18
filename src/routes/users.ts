@@ -66,15 +66,15 @@ router.post("/login", async (req, res) => {
       expiresIn: "1d",
     });
 
-    res.json({ data: token });
+    res.json({ token: token });
   } catch (error) {
     res.status(500).json({ message: error });
   }
 });
 
 router.get("/me", middleware, async (req: RequestAuth, res) => {
-    const user = req.user
-    res.json({ user })
+  const user = req.user;
+  res.json({ user });
 });
 
 export default router;
