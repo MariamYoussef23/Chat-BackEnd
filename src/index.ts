@@ -7,20 +7,25 @@ import { AppDataSource } from "./data-source";
 import usersRouter from "./routes/users";
 import chatsRouter from "./routes/chats";
 import { Server } from "socket.io";
-
-const io = new Server(4545);
-
-io.on("connection", (socket) => {
-  // send a message to the client
-  socket.emit("hello from server", 1, "2", { 3: Buffer.from([4]) });
-
-  // receive a message from the client
-  socket.on("hello from client", (...args) => {
-    // ...
-  });
-});
+import http from "http";
 
 const app = express();
+const server = http.createServer(app);
+server.listen(2222);
+
+const io = new Server(server, {
+  cors: {
+    origin: "*",
+  },
+});
+
+io.on("connection", (socket) => {
+  console.log("connected");
+  socket.on("new message", (msg) => {
+    console.log(msg);
+    io.emit("new message", msg);
+  });
+});
 
 config();
 app.use(cors());
