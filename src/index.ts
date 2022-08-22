@@ -11,7 +11,7 @@ import http from "http";
 
 const app = express();
 const server = http.createServer(app);
-server.listen(2222);
+server.listen(1212);
 
 const io = new Server(server, {
   cors: {
@@ -19,11 +19,23 @@ const io = new Server(server, {
   },
 });
 
+// io.on("connection", (socket) => {
+//   console.log("connected");
+//   socket.on("new message", (msg) => {
+//     console.log(msg);
+//     io.emit("new message", msg);
+//   });
+// });
+
 io.on("connection", (socket) => {
   console.log("connected");
-  socket.on("new message", (msg) => {
-    console.log(msg);
-    io.emit("new message", msg);
+  socket.on("room", (userId) => {
+    socket.join(userId);
+  });
+  socket.on("message", (userIds, msg) => {
+    userIds.userIds.map((userId: string) => {
+      socket.to(userId).emit("new message", msg);
+    });
   });
 });
 
