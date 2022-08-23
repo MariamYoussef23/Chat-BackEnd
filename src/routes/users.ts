@@ -5,18 +5,10 @@ import jwt from "jsonwebtoken";
 import axios from "axios";
 import { middleware } from "./middleware";
 import { RequestAuth } from "../types";
+import { Not } from "typeorm";
 
 const router = Router();
 
-router.get("/", async (req, res) => {
-  try {
-    const users = await User.find();
-
-    res.json({ data: users });
-  } catch (error) {
-    res.status(500).json({ message: error });
-  }
-});
 
 router.post("/signUp", async (req, res) => {
   try {
@@ -71,10 +63,20 @@ router.post("/login", async (req, res) => {
     res.status(500).json({ message: error });
   }
 });
+router.get("/", middleware, async (req: RequestAuth, res) => {
+  try {
+    const user = req.user!;
+    const users = await User.find({ where: { id: Not(user.id) } });
+    res.json({ data: users });
+  } catch (error) {
+    res.status(500).json({ message: error });
+  }
+});
+
 
 router.get("/me", middleware, async (req: RequestAuth, res) => {
-    const user = req.user
-    res.json({ user })
+  const user = req.user;
+  res.json({ user });
 });
 
 export default router;
