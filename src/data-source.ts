@@ -4,7 +4,6 @@ import "reflect-metadata";
 import { User } from "./entities/user";
 import { Chat } from "./entities/chat";
 import { Message } from "./entities/message";
-import { MainEntity } from "./entities/main";
 
 config();
 export const AppDataSource = new DataSource({
@@ -17,7 +16,7 @@ export const AppDataSource = new DataSource({
   synchronize: true,
   logging: false,
 
-  entities: [ Message, User, Chat],
+  entities: [User, Chat, Message],
   migrations: ["migration/*.ts"],
   subscribers: [],
 });
