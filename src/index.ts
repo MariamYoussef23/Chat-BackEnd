@@ -29,13 +29,16 @@ const io = new Server(server, {
 
 io.on("connection", (socket) => {
   console.log("connected");
-  socket.on("room", (userId) => {
-    socket.join(userId);
+  socket.on("room", (userEmail) => {
+    socket.join(userEmail);
+    console.log(userEmail)
   });
-  socket.on("message", (userIds, msg) => {
-    userIds.userIds.map((userId: string) => {
-      socket.to(userId).emit("new message", msg);
+  socket.on("message", (msg) => {
+    console.log(msg);
+    msg.userEmails.map((userEmail: string) => {
+      io.to(userEmail).emit("new message", msg.body);
     });
+    
   });
 });
 
